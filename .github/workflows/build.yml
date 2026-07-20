@@ -1,0 +1,73 @@
+name: Build FaceMagic Exe
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          architecture: 'x64'
+
+      - name: Install dependencies
+        run: |
+          cd deep-live-cam
+          python -m pip install --upgrade pip
+          pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Download model files
+        run: |
+          cd deep-live-cam
+          mkdir -p models
+          curl -L -o models/inswapper_128_fp16.onnx "https://github.com/facefusion/facefusion-assets/releases/download/models-3.0.0/inswapper_128_fp16.onnx"
+          curl -L -o models/gfpganv1.4.pth "https://github.com/facefusion/facefusion-assets/releases/download/models-3.0.0/gfpgan_1.4.pth"
+
+      - name: Build with PyInstaller
+        run: |
+          cd deep-live-cam
+          pyinstaller ^
+            --onedir ^
+            --name "渣辉启动器" ^
+            --add-data "icon.jpg;." ^
+            --add-data "locales;locales" ^
+            --add-data "modules;modules" ^
+            --add-data "models;models" ^
+            --hidden-import PySide6.QtCore ^
+            --hidden-import PySide6.QtWidgets ^
+            --hidden-import PySide6.QtGui ^
+            --hidden-import PySide6.QtNetwork ^
+            --hidden-import cv2 ^
+            --hidden-import insightface ^
+            --hidden-import onnxruntime ^
+            --hidden-import PIL ^
+            --hidden-import requests ^
+            --hidden-import numpy ^
+            --hidden-import modules.auth ^
+            --collect-all PySide6 ^
+            渣辉启动器.py
+
+      - name: Copy config file
+        run: |
+          copy deep-live-cam\auth_config.json dist\渣辉启动器\
+
+      - name: Create startup script
+        run: |
+          echo @echo off > dist\渣辉启动器\一键启动.bat
+          echo 渣辉启动器.exe >> dist\渣辉启动器\一键启动.bat
+          echo pause >> dist\渣辉启动器\一键启动.bat
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FaceMagic-渣辉启动器
+          path: dist/渣辉启动器/

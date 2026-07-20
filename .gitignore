@@ -1,7 +1,10 @@
-server/accounts.json
-server/server.log
-server/server.pid
+vercel-server.tar.gz
+vercel-server/.agents/
+vercel-server/.claude/
+vercel-server/skills-lock.json
+vercel-server/.gitignore
 __pycache__/
 *.pyc
 venv/
 .env
+.env.local

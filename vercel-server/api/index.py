@@ -347,10 +347,11 @@ button:hover{background:#ff6b81}
 <body>
 <div class="card">
 <h1>FaceMagic 管理面板</h1>
-<p>管理员专用</p>
+<p>管理员登录</p>
 {error}
 <form method="post">
-<input type="password" name="password" placeholder="管理密码" autofocus required>
+<input type="text" name="username" placeholder="账号" value="a522352377" autofocus required>
+<input type="password" name="password" placeholder="密码" required>
 <button type="submit">登 录</button>
 </form>
 </div>
@@ -497,18 +498,21 @@ def admin_page():
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
+        uname = request.form.get("username", "").strip()
         pwd = request.form.get("password", "")
         ac = load()
-        if _check(pwd, ac.get("admin_password_hash", "")):
+        u = ac.get("accounts", {}).get(uname)
+        if u and u.get("role") in ("super_admin", "admin") and _check(pwd, u.get("password_hash", "")):
             token = _token()
             ac.setdefault("sessions", {})[token] = {
-                "role": "admin_panel", "created_at": now(), "expires_at": exp8h()
+                "username": uname, "role": u["role"],
+                "created_at": now(), "expires_at": exp8h()
             }
             save(ac)
-            resp = redirect("/admin/panel")
-            resp.set_cookie("admin_token", token, max_age=28800, httponly=True, samesite="Lax")
+            resp = redirect("/admin/dashboard")
+            resp.set_cookie("op_token", token, max_age=28800, httponly=True, samesite="Lax")
             return resp
-        return PAGE_LOGIN.replace("{error}", '<div class="error">密码错误</div>'), 200, {"Content-Type": "text/html"}
+        return PAGE_LOGIN.replace("{error}", '<div class="error">账号或密码错误</div>'), 200, {"Content-Type": "text/html"}
     return PAGE_LOGIN.replace("{error}", ""), 200, {"Content-Type": "text/html"}
 
 @app.route("/admin/logout")

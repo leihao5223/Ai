@@ -1,33 +1,7 @@
-# FaceMagic
-
-# Python
+server/accounts.json
+server/server.log
+server/server.pid
 __pycache__/
 *.pyc
-*.pyo
-*.egg-info/
 venv/
 .env
-
-# Build output
-dist/
-build/
-*.spec
-
-# Model files
-deep-live-cam/models/
-
-# Local config
-deep-live-cam/auth_config.json
-
-# Server DB
-server/cards.db
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo

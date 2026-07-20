@@ -473,7 +473,7 @@ function closeExp(){{q('#expModal').classList.remove('show');exu=null;sd=null}}
 function sel(el){{document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');sd=parseInt(el.dataset.d)}}
 function confirmExp(d){{if(d>=0&&sd===null){{al('请选择期限','error');return}}
 api('/api/admin/users/'+exu+'/expiry',{{method:'PUT',body:JSON.stringify({{duration_days:d>=0?d:sd}})}}).then(r=>{{al(r.msg,r.success?'success':'error');if(r.success)location.reload();closeExp()}})}}
-document.querySelectorAll('.modal').forEach(m=>{{m.addEventListener('click',function(e){{if(e.target===this)this.classList.remove('show')}})})
+document.querySelectorAll('.modal').forEach(m=>{{m.addEventListener('click',function(e){{if(e.target===this)this.classList.remove('show')}})}})
 </script></body></html>"""
 
 @app.route("/admin/")

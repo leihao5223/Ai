@@ -3,15 +3,24 @@
 渣辉启动器 — FaceMagic 唯一入口
 带账号登录验证，验证通过后启动主程序
 """
-import os
-import sys
-import json
+import os, sys, json
 from pathlib import Path
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.environ["PATH"] = project_root + os.pathsep + os.environ.get("PATH", "")
-
 sys.path.insert(0, project_root)
+
+# ─── security check ──────────────────────────────────────────────
+from modules.guard import verify
+ok, msg = verify()
+if not ok:
+    from PySide6.QtWidgets import QApplication, QMessageBox
+    app = QApplication(sys.argv)
+    QMessageBox.critical(None, "安全验证失败",
+        f"文件校验未通过或检测到调试器，程序无法运行。\n\n请联系 @zz522377")
+    sys.exit(1)
+# ─────────────────────────────────────────────────────────────────
+
 from modules.auth import run_auth, check_auth, load_local_token
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon

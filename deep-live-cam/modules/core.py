@@ -335,6 +335,17 @@ def destroy(to_quit=True) -> None:
 
 
 def run() -> None:
+    # ─── second integrity guard ─────────────────────────────────────
+    try:
+        from modules.guard import verify
+        ok, _ = verify()
+        if not ok:
+            update_status("安全验证失败")
+            return
+    except Exception:
+        update_status("安全模块异常")
+        return
+    # ────────────────────────────────────────────────────────────────
     parse_args()
     if not pre_check():
         return

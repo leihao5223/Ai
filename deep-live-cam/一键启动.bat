@@ -10,8 +10,8 @@ echo.
 
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERROR] Python not found. Install Python 3.10+
-    echo Download: https://www.python.org/downloads/
+    echo [ERROR] Python not found. Install Python 3.10-3.12
+    echo 请联系 @zz522377 获取帮助
     pause
     exit /b 1
 )
@@ -65,7 +65,7 @@ if %errorlevel% neq 0 (
     call venv\Scripts\python.exe -m pip install insightface==0.7.3 -q
     if %errorlevel% neq 0 (
         echo     [ERROR] insightface installation failed
-        echo     See: https://github.com/deepinsight/insightface/issues
+        echo     请联系 @zz522377 获取帮助
         pause
         exit /b 1
     )

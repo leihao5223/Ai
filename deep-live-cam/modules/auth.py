@@ -1,4 +1,4 @@
-"""FaceMagic 卡密验证模块 — 客户端"""
+"""FaceMagic 账号登录模块 — 客户端"""
 import json
 import os
 import sys
@@ -8,24 +8,21 @@ import requests
 from datetime import datetime
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton,
-    QHBoxLayout, QMessageBox, QApplication
+    QHBoxLayout, QApplication
 )
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtGui import QIcon
 
 # ─── 配置 ────────────────────────────────────────────────────────────────────
 
-# 本地 token 存储路径
 TOKEN_FILE = os.path.join(os.path.dirname(__file__), "..", ".auth_token")
 
-# XOR 混淆密钥 (只是为了防明文读取)
 XOR_KEY = b"FaceMagic_XOR_2025_Secret!!"
 
 def _xor_obfuscate(data: bytes) -> bytes:
     return bytes(b ^ XOR_KEY[i % len(XOR_KEY)] for i, b in enumerate(data))
 
 def get_device_id():
-    """生成稳定的设备 ID"""
     system = platform.system()
     node = platform.node()
     machine = platform.machine()
@@ -33,21 +30,17 @@ def get_device_id():
     return uuid.uuid5(uuid.NAMESPACE_DNS, raw).hex[:16]
 
 def load_local_token() -> dict | None:
-    """读取本地缓存的 token"""
     try:
-        path = TOKEN_FILE
-        if not os.path.exists(path):
+        if not os.path.exists(TOKEN_FILE):
             return None
-        with open(path, "rb") as f:
+        with open(TOKEN_FILE, "rb") as f:
             encrypted = f.read()
         decrypted = _xor_obfuscate(encrypted)
-        data = json.loads(decrypted.decode())
-        return data
+        return json.loads(decrypted.decode())
     except Exception:
         return None
 
 def save_local_token(data: dict):
-    """保存 token 到本地"""
     try:
         raw = json.dumps(data, ensure_ascii=False).encode()
         encrypted = _xor_obfuscate(raw)
@@ -57,19 +50,18 @@ def save_local_token(data: dict):
         pass
 
 def clear_local_token():
-    """清除本地 token"""
     try:
         if os.path.exists(TOKEN_FILE):
             os.remove(TOKEN_FILE)
     except Exception:
         pass
 
-def verify_with_server(card_key: str, device_id: str, server_url: str = "http://127.0.0.1:5000") -> dict:
-    """向服务器验证卡密"""
+def login_with_server(username: str, password: str, server_url: str = "http://127.0.0.1:5000") -> dict:
+    """向服务器发起账号密码登录"""
     try:
         resp = requests.post(
-            f"{server_url.rstrip('/')}/verify",
-            json={"card_key": card_key, "device_id": device_id},
+            f"{server_url.rstrip('/')}/api/login",
+            json={"username": username, "password": password},
             timeout=10
         )
         return resp.json()
@@ -81,7 +73,7 @@ def verify_with_server(card_key: str, device_id: str, server_url: str = "http://
         return {"success": False, "msg": f"验证异常: {str(e)}"}
 
 def check_auth() -> bool:
-    """检查本地 token 是否有效（离线检查）"""
+    """检查本地 token 是否有效"""
     token = load_local_token()
     if token is None:
         return False
@@ -98,13 +90,13 @@ def check_auth() -> bool:
     return False
 
 
-class AuthDialog(QDialog):
-    """卡密登录对话框"""
+class LoginDialog(QDialog):
+    """账号登录对话框"""
 
     def __init__(self, icon_path: str = "", server_url: str = "http://127.0.0.1:5000"):
         super().__init__()
-        self.setWindowTitle("渣辉启动器 - 卡密验证")
-        self.setFixedSize(420, 300)
+        self.setWindowTitle("FaceMagic - 登录")
+        self.setFixedSize(400, 320)
         self._server_url = server_url
         self.setStyleSheet("""
             QDialog { background-color: #1a1a2e; }
@@ -115,9 +107,9 @@ class AuthDialog(QDialog):
                 border: 1px solid #0f3460;
                 border-radius: 6px;
                 padding: 10px;
-                font-size: 14pt;
-                font-family: monospace;
+                font-size: 13pt;
             }
+            QLineEdit:focus { border-color: #e94560; }
             QPushButton {
                 background-color: #e94560;
                 color: white;
@@ -132,28 +124,35 @@ class AuthDialog(QDialog):
         """)
 
         layout = QVBoxLayout(self)
-        layout.setSpacing(15)
+        layout.setSpacing(12)
         layout.setContentsMargins(30, 25, 30, 25)
 
         # 标题
-        title = QLabel("渣辉启动器 v1.0")
+        title = QLabel("FaceMagic")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("font-size: 18pt; font-weight: bold; color: #e94560;")
+        title.setStyleSheet("font-size: 22pt; font-weight: bold; color: #e94560;")
         layout.addWidget(title)
 
-        subtitle = QLabel("请输入卡密激活软件")
+        subtitle = QLabel("请输入账号密码登录")
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle.setStyleSheet("font-size: 10pt; color: #888;")
         layout.addWidget(subtitle)
 
-        layout.addSpacing(10)
+        layout.addSpacing(15)
 
-        # 卡密输入框
-        self.card_input = QLineEdit()
-        self.card_input.setPlaceholderText("AI-XXXX-XXXX-XXXX")
-        self.card_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.card_input.returnPressed.connect(self.on_verify)
-        layout.addWidget(self.card_input)
+        # 用户名输入
+        self.username_input = QLineEdit()
+        self.username_input.setPlaceholderText("用户名")
+        self.username_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.username_input)
+
+        # 密码输入
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_input.setPlaceholderText("密码")
+        self.password_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.password_input.returnPressed.connect(self.on_login)
+        layout.addWidget(self.password_input)
 
         # 状态提示
         self.status_label = QLabel("")
@@ -166,9 +165,9 @@ class AuthDialog(QDialog):
 
         # 按钮
         btn_layout = QHBoxLayout()
-        self.verify_btn = QPushButton("激 活")
-        self.verify_btn.clicked.connect(self.on_verify)
-        btn_layout.addWidget(self.verify_btn)
+        self.login_btn = QPushButton("登 录")
+        self.login_btn.clicked.connect(self.on_login)
+        btn_layout.addWidget(self.login_btn)
 
         self.exit_btn = QPushButton("退出")
         self.exit_btn.setStyleSheet("background-color: #555;")
@@ -178,24 +177,27 @@ class AuthDialog(QDialog):
 
         layout.addStretch()
 
-        self.result = None
         self._loading = False
 
     def set_loading(self, loading: bool):
         self._loading = loading
-        self.verify_btn.setEnabled(not loading)
-        self.card_input.setEnabled(not loading)
-        if loading:
-            self.verify_btn.setText("验证中...")
-        else:
-            self.verify_btn.setText("激 活")
+        self.login_btn.setEnabled(not loading)
+        self.username_input.setEnabled(not loading)
+        self.password_input.setEnabled(not loading)
+        self.login_btn.setText("登录中..." if loading else "登 录")
 
-    def on_verify(self):
+    def on_login(self):
         if self._loading:
             return
-        card_key = self.card_input.text().strip().upper()
-        if not card_key:
-            self.status_label.setText("请输入卡密")
+        username = self.username_input.text().strip()
+        password = self.password_input.text()
+
+        if not username:
+            self.status_label.setText("请输入用户名")
+            self.status_label.setStyleSheet("font-size: 10pt; color: #ff6b6b;")
+            return
+        if not password:
+            self.status_label.setText("请输入密码")
             self.status_label.setStyleSheet("font-size: 10pt; color: #ff6b6b;")
             return
 
@@ -204,43 +206,44 @@ class AuthDialog(QDialog):
         self.status_label.setStyleSheet("font-size: 10pt; color: #ffd93d;")
         QApplication.processEvents()
 
-        device_id = get_device_id()
-        result = verify_with_server(card_key, device_id, self._server_url)
+        result = login_with_server(username, password, self._server_url)
 
         self.set_loading(False)
         if result.get("success"):
             save_local_token({
-                "card_key": card_key,
+                "username": username,
+                "token": result.get("token", ""),
                 "expires_at": result.get("expires_at", ""),
-                "device_id": device_id,
+                "account_expires_at": result.get("account_expires_at", ""),
             })
-            self.status_label.setText("✅ " + result.get("msg", "验证成功"))
+            msg = result.get("msg", "登录成功")
+            self.status_label.setText(msg)
             self.status_label.setStyleSheet("font-size: 10pt; color: #6bcb77;")
             QApplication.processEvents()
-            QTimer.singleShot(800, self.accept)
+            QTimer.singleShot(500, self.accept)
         else:
-            self.status_label.setText("❌ " + result.get("msg", "验证失败"))
+            self.status_label.setText(result.get("msg", "登录失败"))
             self.status_label.setStyleSheet("font-size: 10pt; color: #ff6b6b;")
-
-    def get_card_key(self) -> str:
-        return self.card_input.text().strip().upper() if self.result else ""
 
 
 def run_auth(icon_path: str = "", server_url: str = "http://127.0.0.1:5000") -> bool:
     """
-    运行卡密验证流程。
+    运行登录验证流程。
     返回 True 表示验证通过，False 表示退出。
     """
     # 先检查本地 token
     if check_auth():
         return True
 
-    # 没有本地 token 或已过期，显示登录对话框
+    # 没有有效 token，显示登录对话框
     app = QApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
 
-    dialog = AuthDialog(icon_path, server_url)
+    if icon_path and os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+
+    dialog = LoginDialog(icon_path, server_url)
     result = dialog.exec()
 
     if result == QDialog.DialogCode.Accepted:

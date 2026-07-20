@@ -501,7 +501,7 @@ class MainWindow(QMainWindow):
         self._status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self._status_label)
 
-        footer = QLabel("Telegram: @zz522377")
+        footer = QLabel("纯手机版AI，不需要电脑，比电脑清晰流畅3倍起\n开发联系 @zz522377，自报来处，不认识不接")
         footer.setObjectName("linkLabel")
         footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         footer.setCursor(Qt.CursorShape.PointingHandCursor)

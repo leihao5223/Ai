@@ -8,7 +8,7 @@ _CHECKSUMS = {
     "modules/auth.py": "f1296ec0399b15ad0ff8f88114bace4b9f3506ecc4425c66dfc308be0cfe3e5d",
     "modules/capturer.py": "bc64d3cd993a34c34bedb379eca469f4afab52752cc36e52d746134e36c93bb0",
     "modules/cluster_analysis.py": "0a461af05851409eb9bd4641066ecfa7e41754680050c5f789cb12a970904b0a",
-    "modules/core.py": "1314aa670b9a74ae672a62a2ecad9c4e3b982ee2d019eb1140d3de86bab391a2",
+    "modules/core.py": "9ccd2b0a340ac497fb22d6d001871b20c2d94ccd144cbe36adef65e126230003",
     "modules/custom_types.py": "d7a1ce26fec4011957ef145eb842215f8270ff12eb231c175ed677bbcd814a6f",
     "modules/face_analyser.py": "bf5dae44f8d325246c7789b3e7cc4f8633a35ec951bf9ca12f040e81da993b1a",
     "modules/gettext.py": "eaa23229067b0b02e6687cc02d8cda5a45835cd0b913bbceb8f464d06e05294b",
@@ -37,7 +37,7 @@ _CHECKSUMS = {
     "modules/video_capture.py": "03b5f69c11c8f1f739f87343769d7feadfe3e153d3beea194849393269a2a473",
     "zhaohui_launcher.py": "72b775945441833d0bf23b8f61fefad302a55632b89f4f4e319500906d2b5669"
 }
-_CHECKSUMS_SELF_HASH = "538620e193f2533ba3906ecbc4ed2904998ed4b5259a3b292e2c8ec4b79e4fc8"  # sha256 of guard.py
+_CHECKSUMS_SELF_HASH = "b882e0dfffc6a2d57c0a5fa5cf608aac5cc98d3d7c5349fdd78f971783de569f"  # sha256 of guard.py
 
 # --- integrity ----------------------------------------------------------------
 

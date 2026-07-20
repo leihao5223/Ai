@@ -40,15 +40,15 @@ if %errorlevel% neq 0 (
 echo [2/6] Upgrading pip...
 call venv\Scripts\python.exe -m pip install --upgrade pip -q
 
-echo [3/6] Installing base deps...
-call venv\Scripts\python.exe -m pip install numpy opencv-python pillow psutil tqdm -q
+echo [3/6] Installing core deps...
+call venv\Scripts\python.exe -m pip install numpy opencv-python pillow psutil tqdm onnx -q
 if %errorlevel% neq 0 (
-    echo [ERROR] Base deps install failed
+    echo [ERROR] Core deps install failed
     pause
     exit /b 1
 )
 
-echo [4/6] Installing AI engine...
+echo [4/6] Installing AI engine (onnxruntime)...
 echo     Trying GPU (needs NVIDIA + CUDA)...
 call venv\Scripts\python.exe -m pip install onnxruntime-gpu==1.23.2 -q
 if %errorlevel% neq 0 (
@@ -58,11 +58,17 @@ if %errorlevel% neq 0 (
 echo    [OK] onnxruntime installed
 
 echo [5/6] Installing other deps...
-echo     Installing insightface...
-call venv\Scripts\python.exe -m pip install insightface==0.7.3 -q
+echo     Installing insightface (this may take a while)...
+call venv\Scripts\python.exe -m pip install insightface -q
 if %errorlevel% neq 0 (
-    echo     Version 0.7.3 failed, trying latest...
-    call venv\Scripts\python.exe -m pip install insightface -q
+    echo     [WARN] Latest insightface failed, trying v0.7.3...
+    call venv\Scripts\python.exe -m pip install insightface==0.7.3 -q
+    if %errorlevel% neq 0 (
+        echo     [ERROR] insightface installation failed
+        echo     See: https://github.com/deepinsight/insightface/issues
+        pause
+        exit /b 1
+    )
 )
 echo     Installing PySide6...
 call venv\Scripts\python.exe -m pip install PySide6 -q

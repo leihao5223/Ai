@@ -14,7 +14,7 @@ if os.environ.get("KV_REST_API_URL") and os.environ.get("KV_REST_API_TOKEN"):
     redis = Redis(url=os.environ["KV_REST_API_URL"], token=os.environ["KV_REST_API_TOKEN"])
 
 DATA_KEY = "facemagic:v3"
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin888")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Qq1314520.")
 
 def _hash(password, salt=None):
     if salt is None:
@@ -525,36 +525,11 @@ def admin_panel():
     if s.get("role") != "admin_panel" or s.get("expires_at", "") < now():
         return redirect("/admin/login")
 
-    # 管理员先选自己要操作的账号登录
-    return f"""<!DOCTYPE html>
-<html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FaceMagic 管理面板 - 选择账号</title>
-<style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:-apple-system,sans-serif;background:#1a1a2e;color:#e0e0e0;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}}
-.card{{background:#16213e;padding:40px;border-radius:12px;width:400px;box-shadow:0 8px 32px rgba(0,0,0,.3)}}
-h1{{color:#e94560;text-align:center;margin-bottom:24px;font-size:20px}}
-.btn{{display:block;width:100%;padding:14px;border-radius:8px;border:1px solid #0f3460;background:#0f3460;color:#e0e0e0;font-size:14px;cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:none}}
-.btn:hover{{border-color:#e94560;background:#1a3a6b}}
-.btn-admin{{border-color:#e94560;color:#e94560}}
-p{{color:#888;text-align:center;margin-bottom:20px;font-size:13px}}
-</style></head>
-<body>
-<div class="card">
-<h1>FaceMagic 管理面板</h1>
-<p>选择要管理的账号登录</p>
-<a href="/admin/login-as?user=a522352377" class="btn btn-admin">超管 - a522352377</a>
-<a href="/admin/login-as?user=xianqi5223" class="btn">管理 - xianqi5223</a>
-</div>
-</body></html>"""
+    return redirect("/admin/login-as?user=a522352377")
 
 @app.route("/admin/login-as", methods=["GET"])
 def admin_login_as():
-    username = request.args.get("user", "")
-    if username not in ("a522352377", "xianqi5223"):
-        return redirect("/admin/panel")
-
+    username = request.args.get("user", "a522352377")
     token = request.cookies.get("admin_token", "")
     ac = load()
     s = ac.get("sessions", {}).get(token, {})

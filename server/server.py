@@ -5,7 +5,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ACCOUNTS_FILE = os.path.join(BASE_DIR, "accounts.json")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin888")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Qq1314520.")
 
 # ─── 数据 ──────────────────────────────────────────────────────────────────────
 

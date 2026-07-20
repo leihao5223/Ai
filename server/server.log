@@ -1,4 +1,0 @@
-  File "/data/data/com.termux/files/home/Ai-repo/server/server.py", line 399
-    document.querySelectorAll('.modal').forEach(m=>{{m.addEventListener('click',function(e){{if(e.target===this)this.classList.remove('show')}})})
-                                                                                                                                                ^
-SyntaxError: f-string: single '}' is not allowed

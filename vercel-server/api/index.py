@@ -59,12 +59,12 @@ def load():
         raw = redis.get(DATA_KEY)
         if raw:
             data = json.loads(raw)
-            # 确保种子账号存在
             data.setdefault("accounts", {})
-            if "a522352377" not in data["accounts"]:
-                data["accounts"]["a522352377"] = _seed()["accounts"]["a522352377"]
-            if "xianqi5223" not in data["accounts"]:
-                data["accounts"]["xianqi5223"] = _seed()["accounts"]["xianqi5223"]
+            seed = _seed()
+            for k, v in seed["accounts"].items():
+                data["accounts"].setdefault(k, v)
+            # 确保管理密码与 ADMIN_PASSWORD 一致
+            data["admin_password_hash"] = seed["admin_password_hash"]
             return data
     except Exception:
         pass
@@ -102,7 +102,7 @@ def require_role(*roles):
     def deco(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = request.headers.get("X-Admin-Token", "") or request.cookies.get("admin_token", "")
+            token = request.headers.get("X-Admin-Token", "") or request.cookies.get("admin_token", "") or request.cookies.get("op_token", "")
             result = authorize(token, roles)
             if not result:
                 return jsonify({"success": False, "msg": "无权限"}), 401

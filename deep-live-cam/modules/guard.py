@@ -35,9 +35,9 @@ _CHECKSUMS = {
     "modules/ui_tooltip.py": "61d515f60023f78480a27b4652f1e5eb88bb1d45d402c30ea6ccaef092b42ee8",
     "modules/utilities.py": "d0bd14936957de7c347d5d1b638558bb339f6af066190668fe2a40b1b684b0e8",
     "modules/video_capture.py": "03b5f69c11c8f1f739f87343769d7feadfe3e153d3beea194849393269a2a473",
-    "zhaohui_launcher.py": "72b775945441833d0bf23b8f61fefad302a55632b89f4f4e319500906d2b5669"
+    "zhaohui_launcher.py": "c47d9ec188ddc4ea25f3c22ab966dbf6fe4388db5f658dd7ea34ddcc082b02b1"
 }
-_CHECKSUMS_SELF_HASH = "b882e0dfffc6a2d57c0a5fa5cf608aac5cc98d3d7c5349fdd78f971783de569f"  # sha256 of guard.py
+_CHECKSUMS_SELF_HASH = "1415790f917692489cc9fc80571739bff456262731b317e34e77fa0ef0e63df6"  # sha256 of guard.py
 
 # --- integrity ----------------------------------------------------------------
 

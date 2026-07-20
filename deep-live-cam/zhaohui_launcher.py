@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-渣辉启动器 — FaceMagic 唯一入口
-带账号登录验证，验证通过后启动主程序
+FaceMagic Launcher — account login verification, then start main program
 """
 import os, sys, json
 from pathlib import Path
@@ -10,28 +9,14 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 os.environ["PATH"] = project_root + os.pathsep + os.environ.get("PATH", "")
 sys.path.insert(0, project_root)
 
-# ─── security check ──────────────────────────────────────────────
-from modules.guard import verify
-ok, msg = verify()
-if not ok:
-    from PySide6.QtWidgets import QApplication, QMessageBox
-    app = QApplication(sys.argv)
-    QMessageBox.critical(None, "安全验证失败",
-        f"文件校验未通过或检测到调试器，程序无法运行。\n\n请联系 @zz522377")
-    sys.exit(1)
-# ─────────────────────────────────────────────────────────────────
-
-from modules.auth import run_auth, check_auth, load_local_token
+from modules.auth import run_auth, load_local_token
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
 AUTH_CONFIG_FILE = os.path.join(project_root, "auth_config.json")
 
 def load_config():
-    default = {
-        "server_url": "http://127.0.0.1:5000",
-        "last_username": ""
-    }
+    default = {"server_url": "http://127.0.0.1:5000", "last_username": ""}
     try:
         if os.path.exists(AUTH_CONFIG_FILE):
             with open(AUTH_CONFIG_FILE, "r") as f:
@@ -59,8 +44,16 @@ def main():
     if os.path.exists(icon_path):
         app.setWindowIcon(QIcon(icon_path))
 
-    auth_ok = run_auth(icon_path, config.get("server_url", "http://127.0.0.1:5000"))
+    # Integrity check
+    from modules.guard import verify
+    ok, _ = verify()
+    if not ok:
+        from PySide6.QtWidgets import QMessageBox
+        QMessageBox.critical(None, "安全验证失败",
+            "文件校验未通过或检测到调试器\n\n请联系 @zz522377")
+        sys.exit(1)
 
+    auth_ok = run_auth(icon_path, config.get("server_url", "http://127.0.0.1:5000"))
     if not auth_ok:
         print("用户退出登录")
         sys.exit(0)

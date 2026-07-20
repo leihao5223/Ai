@@ -3,7 +3,7 @@ chcp 65001 >nul
 title FaceMagic 打包工具
 
 echo ============================================
-echo   FaceMagic — 渣辉启动器 打包脚本
+echo   FaceMagic — zhaohui_launcher 打包脚本
 echo ============================================
 echo.
 
@@ -48,7 +48,7 @@ echo [4/5] 打包中（可能需要 10-20 分钟）...
 if exist dist rmdir /s /q dist
 pyinstaller ^
     --onedir ^
-    --name "渣辉启动器" ^
+    --name "zhaohui_launcher" ^
     --add-data "icon.jpg;." ^
     --add-data "locales;locales" ^
     --add-data "modules;modules" ^
@@ -65,18 +65,18 @@ pyinstaller ^
     --hidden-import numpy ^
     --hidden-import modules.auth ^
     --collect-all PySide6 ^
-    渣辉启动器.py
+    zhaohui_launcher.py
 
 :: 复制配置文件
 echo [5/5] 生成启动脚本...
-copy auth_config.json dist\渣辉启动器\
-echo @echo off > dist\渣辉启动器\一键启动.bat
-echo 渣辉启动器.exe >> dist\渣辉启动器\一键启动.bat
+copy auth_config.json dist\zhaohui_launcher\
+echo @echo off > dist\zhaohui_launcher\一键启动.bat
+echo zhaohui_launcher.exe >> dist\zhaohui_launcher\一键启动.bat
 
 echo.
 echo ============================================
 echo   打包完成！
-echo   输出目录: dist\渣辉启动器\
+echo   输出目录: dist\zhaohui_launcher\
 echo   请先编辑 auth_config.json 设置服务器地址
 echo   然后运行 一键启动.bat
 echo ============================================

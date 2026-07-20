@@ -37,7 +37,7 @@ jobs:
           cd deep-live-cam
           pyinstaller ^
             --onedir ^
-            --name "渣辉启动器" ^
+            --name "zhaohui_launcher" ^
             --add-data "icon.jpg;." ^
             --add-data "locales;locales" ^
             --add-data "modules;modules" ^
@@ -54,20 +54,20 @@ jobs:
             --hidden-import numpy ^
             --hidden-import modules.auth ^
             --collect-all PySide6 ^
-            渣辉启动器.py
+            zhaohui_launcher.py
 
       - name: Copy config file
         run: |
-          copy deep-live-cam\auth_config.json dist\渣辉启动器\
+          copy deep-live-cam\auth_config.json dist\zhaohui_launcher\
 
       - name: Create startup script
         run: |
-          echo @echo off > dist\渣辉启动器\一键启动.bat
-          echo 渣辉启动器.exe >> dist\渣辉启动器\一键启动.bat
-          echo pause >> dist\渣辉启动器\一键启动.bat
+          echo @echo off > dist\zhaohui_launcher\一键启动.bat
+          echo zhaohui_launcher.exe >> dist\zhaohui_launcher\一键启动.bat
+          echo pause >> dist\zhaohui_launcher\一键启动.bat
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FaceMagic-渣辉启动器
-          path: dist/渣辉启动器/
+          name: FaceMagic-zhaohui_launcher
+          path: dist/zhaohui_launcher/

@@ -12,7 +12,6 @@ python --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] Python not found. Install Python 3.10+
     echo Download: https://www.python.org/downloads/
-    echo Remember to check "Add Python to PATH"
     pause
     exit /b 1
 )
@@ -59,13 +58,19 @@ if %errorlevel% neq 0 (
 echo    [OK] onnxruntime installed
 
 echo [5/6] Installing other deps...
-echo     Installing build tools...
-call venv\Scripts\python.exe -m pip install setuptools wheel cython ninja -q
 echo     Installing insightface...
 call venv\Scripts\python.exe -m pip install insightface==0.7.3 -q
 if %errorlevel% neq 0 (
-    echo     Version 0.7.3 failed, trying latest...
-    call venv\Scripts\python.exe -m pip install insightface -q
+    echo     Build failed - installing C++ compiler...
+    where winget >nul 2>&1
+    if !errorlevel! equ 0 (
+        winget install Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements 2>&1 | findstr /i "success"
+    )
+    call venv\Scripts\python.exe -m pip install insightface==0.7.3 -q
+    if !errorlevel! neq 0 (
+        echo     Still failed, trying latest version...
+        call venv\Scripts\python.exe -m pip install insightface -q
+    )
 )
 echo     Installing PySide6...
 call venv\Scripts\python.exe -m pip install PySide6 -q

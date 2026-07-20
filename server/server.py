@@ -17,7 +17,7 @@ def _seed():
         "accounts": {
             "a522352377": {"role":"super_admin","enabled":True,"created_by":"system",
                 "password_hash":_hash("Qq1314520."),"created_at":n,"expires_at":None,"last_login":None},
-            "xianqi5223": {"role":"admin","enabled":True,"created_by":"a522352377",
+            "xiaoqi5223": {"role":"admin","enabled":True,"created_by":"a522352377",
                 "password_hash":_hash("Aa112211"),"created_at":n,"expires_at":None,"last_login":None}
         }, "sessions": {}, "admin_password_hash": None
     }
@@ -33,6 +33,8 @@ def load():
         with open(ACCOUNTS_FILE) as f: _cache = json.load(f)
         _mtime = mt
         _cache.setdefault("accounts", {})
+        if "xianqi5223" in _cache["accounts"] and "xiaoqi5223" not in _cache["accounts"]:
+            _cache["accounts"]["xiaoqi5223"] = _cache["accounts"].pop("xianqi5223")
         for k, v in _seed()["accounts"].items():
             _cache["accounts"].setdefault(k, v)
         return _cache
@@ -369,13 +371,13 @@ p{{color:#888;text-align:center;margin-bottom:20px;font-size:13px}}
 </style></head><body>
 <div class="card"><h1>FaceMagic 管理面板</h1><p>选择要管理的账号登录</p>
 <a href="/admin/login-as?user=a522352377" class="btn btn-admin">超管 - a522352377</a>
-<a href="/admin/login-as?user=xianqi5223" class="btn">管理 - xianqi5223</a>
+<a href="/admin/login-as?user=xiaoqi5223" class="btn">管理 - xiaoqi5223</a>
 </div></body></html>""")
 
     # GET /admin/login-as
     if method == "GET" and path.startswith("/admin/login-as"):
         uname = parse_qs(path).get("user", [""])[0]
-        if uname not in ("a522352377","xianqi5223"):
+        if uname not in ("a522352377","xiaoqi5223"):
             return redir("/admin/panel")
         t = cookies.get("admin_token","")
         s = ac.get("sessions",{}).get(t,{})

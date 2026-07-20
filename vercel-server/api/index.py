@@ -40,7 +40,7 @@ def _seed():
                 "created_at": datetime.now().isoformat(),
                 "expires_at": None, "last_login": None
             },
-            "xianqi5223": {
+            "xiaoqi5223": {
                 "password_hash": _hash("Aa112211"),
                 "role": "admin",
                 "enabled": True, "created_by": "a522352377",
@@ -60,6 +60,9 @@ def load():
         if raw:
             data = json.loads(raw)
             data.setdefault("accounts", {})
+            # 迁移旧用户名
+            if "xianqi5223" in data["accounts"] and "xiaoqi5223" not in data["accounts"]:
+                data["accounts"]["xiaoqi5223"] = data["accounts"].pop("xianqi5223")
             seed = _seed()
             for k, v in seed["accounts"].items():
                 data["accounts"].setdefault(k, v)

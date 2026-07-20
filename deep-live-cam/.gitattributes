@@ -1,2 +1,13 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+*.py text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.bat text eol=crlf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.onnx binary
+*.pth binary
+*.gif binary
